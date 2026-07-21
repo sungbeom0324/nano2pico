@@ -3,13 +3,14 @@
 
 # Setup root environment according to kernel of ucsb server
 . /cvmfs/cms.cern.ch/cmsset_default.sh
-RUN_KERNEL=$(uname -r | cut -d '-' -f1)
-if [ "$RUN_KERNEL" == "3.10.0" ]; then
-  export SCRAM_ARCH=slc7_amd64_gcc12
-  cd /net/cms11/data/pico/cc7/CMSSW_14_2_2/src
-elif [ "$RUN_KERNEL" == "2.6.32" ]; then
-  cd /net/cms29/cms29r0/pico/CMSSW_10_2_11_patch1/src
-fi
+#RUN_KERNEL=$(uname -r | cut -d '-' -f1)
+#if [ "$RUN_KERNEL" == "3.10.0" ]; then
+#  export SCRAM_ARCH=slc7_amd64_gcc12
+#  cd /net/cms11/data/pico/cc7/CMSSW_14_2_2/src
+#elif [ "$RUN_KERNEL" == "2.6.32" ]; then
+#  cd /net/cms29/cms29r0/pico/CMSSW_10_2_11_patch1/src
+#fi
+cd /home/sungbeom.cho/CMSSW_15_0_17/src 
 eval `scramv1 runtime -sh`
 cd -
 

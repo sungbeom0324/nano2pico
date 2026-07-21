@@ -35,6 +35,8 @@ bin/*
 # Other
 /*.root
 out/*.root
+out_zgamma*
+sucho*
 *.log
 *.pdf
 *.eps

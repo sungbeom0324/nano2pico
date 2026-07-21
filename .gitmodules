@@ -1,6 +1,9 @@
 [submodule "modules/queue_system"]
-	path = modules/queue_system
-	url = https://github.com/richstu/queue_system
+        path = modules/queue_system
+        url = https://github.com/sungbeom0324/queue_system.git
+        branch = python3
+
 [submodule "modules/jb_utils"]
-	path = modules/jb_utils
-	url = https://github.com/richstu/jb_utils
+        path = modules/jb_utils
+        url = https://github.com/sungbeom0324/jb_utils.git
+        branch = python3
