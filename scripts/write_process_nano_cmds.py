@@ -75,7 +75,7 @@ print("Found {} input files.\n".format(len(in_file_paths)))
 cmdfile_name = 'process_nano_cmds.py'
 if (args['tag']!=''): cmdfile_name = cmdfile_name.replace('.py', '_'+args['tag']+'.py')
 cmdfile = open(cmdfile_name,'w')
-cmdfile.write('#!/bin/env python\n')
+cmdfile.write('#!/bin/env python3\n')
 for ifile_path in in_file_paths:
   ifile = os.path.basename(os.path.realpath(ifile_path))
   cmd = '{}/run/process_nano.exe -f {} -i {} -o {}'.format(os.getcwd(), ifile, in_dir, out_base_dir)
