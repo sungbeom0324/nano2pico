@@ -14,6 +14,7 @@
 #include "corrections_tree.hpp"
 #include "utilities.hpp"
 #include "cross_sections.hpp"
+#include "make_connect_file_name.hpp"
 
 #include "mc_producer.hpp"
 #include "el_producer.hpp"
@@ -46,6 +47,7 @@ namespace {
   string out_dir = "";
   int nent_test = -1;
   bool debug = false;
+  bool connect = false;
   // requirements for jets to be counted in njet, mofified for Zgamma below
   float min_jet_pt = 30.0;
   float max_jet_eta =  2.4;
@@ -62,46 +64,53 @@ int main(int argc, char *argv[]){
     cout<<"ERROR: Input file, sum-of-weights and/or output directory not specified. Exit."<<endl;
     exit(1);
   }
+  
+  // file_name is for parsing.
+  string file_name = in_file;
+  if (connect) {
+    file_name = MakeConnectFileName(in_dir, in_file);
+    cout << "CMSConnect parsing filename: " << file_name << endl;
+  }
 
   //bool isData = Contains(in_file, "Run201") ? true : false;
-  bool isData = Contains(in_file, "Run20") ? true : false; //Changed to allow for Run 3 data
-  bool isFastsim = Contains(in_file, "Fast") ? true : false;
-  bool isSignal = Contains(in_file, "TChiHH") || Contains(in_file, "T5qqqqZH") ? true : false;
+  bool isData = Contains(file_name, "Run20") ? true : false;
+  bool isFastsim = Contains(file_name, "Fast") ? true : false;
+  bool isSignal = Contains(file_name, "TChiHH") || Contains(file_name, "T5qqqqZH") ? true : false;
   bool isZgamma = Contains(out_dir, "zgamma");
   if (isZgamma)
-    isSignal = (Contains(in_file, "HtoZG") || Contains(in_file, "HToZG") || 
-                Contains(in_file, "HToMuMu") || Contains(in_file, "Hto2Mu") ? 
+    isSignal = (Contains(file_name, "HtoZG") || Contains(file_name, "HToZG") || 
+                Contains(file_name, "HToMuMu") || Contains(file_name, "Hto2Mu") ? 
                 true : false);
   bool isHiggsino = Contains(out_dir, "higgsino");
   int year = -1;
   int isAPV = false;
   int is_preUL = true;
-  if (regex_search(in_file, std::regex("RunIISummer\\d\\dUL"))) is_preUL = false;
-  if (regex_search(in_file, std::regex("UL201\\d"))) is_preUL = false;
+  if (regex_search(file_name, std::regex("RunIISummer\\d\\dUL"))) is_preUL = false;
+  if (regex_search(file_name, std::regex("UL201\\d"))) is_preUL = false;
   // Find year and isAPV for MC
   if (!isData) { // MC
     if (!is_preUL) { // UL
-      if (regex_search(in_file, std::regex("RunIISummer\\d\\dUL16NanoAODAPV"))) isAPV = true;
-      if (regex_search(in_file, std::regex("RunIISummer\\d\\dUL16"))) year = 2016;
-      else if (regex_search(in_file, std::regex("RunIISummer\\d\\dUL17"))) year = 2017;
-      else if (regex_search(in_file, std::regex("RunIISummer\\d\\dUL18"))) year = 2018;
+      if (regex_search(file_name, std::regex("RunIISummer\\d\\dUL16NanoAODAPV"))) isAPV = true;
+      if (regex_search(file_name, std::regex("RunIISummer\\d\\dUL16"))) year = 2016;
+      else if (regex_search(file_name, std::regex("RunIISummer\\d\\dUL17"))) year = 2017;
+      else if (regex_search(file_name, std::regex("RunIISummer\\d\\dUL18"))) year = 2018;
     } else { // Not UL
-      if (regex_search(in_file, std::regex("RunIISummer16"))) year = 2016;
-      else if (regex_search(in_file, std::regex("RunIIFall17"))) year = 2017;
-      else if (regex_search(in_file, std::regex("RunIIAutumn18"))) year = 2018;
-      else if (regex_search(in_file, std::regex("Run3Summer22"))) year = 2022;
-      else if (regex_search(in_file, std::regex("Run3Summer23"))) year = 2023;
-      else if (regex_search(in_file, std::regex("RunIII2024Summer24"))) year = 2024;
+      if (regex_search(file_name, std::regex("RunIISummer16"))) year = 2016;
+      else if (regex_search(file_name, std::regex("RunIIFall17"))) year = 2017;
+      else if (regex_search(file_name, std::regex("RunIIAutumn18"))) year = 2018;
+      else if (regex_search(file_name, std::regex("Run3Summer22"))) year = 2022;
+      else if (regex_search(file_name, std::regex("Run3Summer23"))) year = 2023;
+      else if (regex_search(file_name, std::regex("RunIII2024Summer24"))) year = 2024;
     }
   } else { // Data
-    if (Contains(in_file, "HIPM")) isAPV = true;
-    if (Contains(in_file, "Run2016")) year = 2016;
-    else if (Contains(in_file, "Run2017")) year = 2017;
-    else if (Contains(in_file, "Run2018")) year = 2018;
-    else if (Contains(in_file, "Run2022")) year = 2022;
-    else if (Contains(in_file, "Run2023")) year = 2023;
-    else if (Contains(in_file, "Run2024")) year = 2024;
-    else if (Contains(in_file, "Run2025")) year = 2025;
+    if (Contains(file_name, "HIPM")) isAPV = true;
+    if (Contains(file_name, "Run2016")) year = 2016;
+    else if (Contains(file_name, "Run2017")) year = 2017;
+    else if (Contains(file_name, "Run2018")) year = 2018;
+    else if (Contains(file_name, "Run2022")) year = 2022;
+    else if (Contains(file_name, "Run2023")) year = 2023;
+    else if (Contains(file_name, "Run2024")) year = 2024;
+    else if (Contains(file_name, "Run2025")) year = 2025;
   }
   if (year < 0) {
     cout<<"ERROR: Add code for new year!"<<endl;
@@ -111,12 +120,12 @@ int main(int argc, char *argv[]){
   bool is2022preEE = false; //Classify data and MC into pre and post EE for 2022
   if(year == 2022){ 
     if(isData){
-      if (Contains(in_file, "2022C") || Contains(in_file, "2022D")){
+      if (Contains(file_name, "2022C") || Contains(file_name, "2022D")){
         is2022preEE = true;
       }
     } else {
-      if (!Contains(in_file, "Summer2022EE") && 
-          !Contains(in_file, "Summer22EE")){
+      if (!Contains(file_name, "Summer2022EE") && 
+          !Contains(file_name, "Summer22EE")){
         is2022preEE = true;
       }
     }
@@ -125,11 +134,11 @@ int main(int argc, char *argv[]){
   bool is2023preBPix = false;
   if(year == 2023){ 
     if(isData){
-      if (Contains(in_file, "2023B") || Contains(in_file, "2023C")){
+      if (Contains(file_name, "2023B") || Contains(file_name, "2023C")){
         is2023preBPix = true;
       }
     } else {
-      if (!Contains(in_file, "Summer23BPix")){
+      if (!Contains(file_name, "Summer23BPix")){
         is2023preBPix = true;
       }
     }
@@ -183,28 +192,28 @@ int main(int argc, char *argv[]){
   if (isData) {
     switch (year) {
       case 2016:
-        if (Contains(in_file, "UL2016")) VVRunLumi = MakeVRunLumi("goldenUL2016");
+        if (Contains(file_name, "UL2016")) VVRunLumi = MakeVRunLumi("goldenUL2016");
         else VVRunLumi = MakeVRunLumi("golden2016");
         break;
       case 2017:
-        if (Contains(in_file, "UL2017")) VVRunLumi = MakeVRunLumi("goldenUL2017");
+        if (Contains(file_name, "UL2017")) VVRunLumi = MakeVRunLumi("goldenUL2017");
         else VVRunLumi = MakeVRunLumi("golden2017");
         break;
       case 2018:
-        if (Contains(in_file, "UL2018")) VVRunLumi = MakeVRunLumi("goldenUL2018");
+        if (Contains(file_name, "UL2018")) VVRunLumi = MakeVRunLumi("goldenUL2018");
         else VVRunLumi = MakeVRunLumi("golden2018");
         break;
       case 2022:
-        if (Contains(in_file, "2022")) VVRunLumi = MakeVRunLumi("golden2022");
+        if (Contains(file_name, "2022")) VVRunLumi = MakeVRunLumi("golden2022");
         break;
       case 2023:
-        if (Contains(in_file, "2023")) VVRunLumi = MakeVRunLumi("golden2023");
+        if (Contains(file_name, "2023")) VVRunLumi = MakeVRunLumi("golden2023");
         break;
       case 2024:
-        if (Contains(in_file, "2024")) VVRunLumi = MakeVRunLumi("golden2024");
+        if (Contains(file_name, "2024")) VVRunLumi = MakeVRunLumi("golden2024");
         break;
       case 2025:
-        if (Contains(in_file, "2025")) VVRunLumi = MakeVRunLumi("golden2025");
+        if (Contains(file_name, "2025")) VVRunLumi = MakeVRunLumi("golden2025");
         break;
       default:
         cout << "ERROR: no golden cert for given year" << endl;
@@ -213,14 +222,14 @@ int main(int argc, char *argv[]){
   }
 
   string in_path = in_dir+"/"+in_file;
-  string wgt_sums_path = out_dir+"/wgt_sums/wgt_sums_"+in_file;
+  string wgt_sums_path = out_dir+"/wgt_sums/wgt_sums_"+file_name;
   string out_path;
-  out_path = out_dir+"/raw_pico/raw_pico_"+in_file;
+  out_path = out_dir+"/raw_pico/raw_pico_"+file_name;
 
   // Find nanoAOD version
   float nanoaod_version = -1;
   std::smatch nanoad_version_matches;
-  bool version_found = std::regex_search(in_file, nanoad_version_matches, std::regex("NanoAOD(?:APVv|v)(\\d+p\\d+|\\d+)"));  
+  bool version_found = std::regex_search(in_dir, nanoad_version_matches, std::regex("NanoAOD(?:APVv|v)(\\d+p\\d+|\\d+)")); // test
   if (version_found) nanoaod_version = std::stof(std::regex_replace(nanoad_version_matches[1].str(), std::regex("p"), "."));
   else {
     bool is_nanoAODv7_found = std::regex_search(in_file, nanoad_version_matches, std::regex("02Apr2020"));
@@ -228,6 +237,7 @@ int main(int argc, char *argv[]){
   }
   if (Contains(in_dir, "NanoAODv9UCSB")) nanoaod_version = 9.5;
   if (Contains(in_dir, "NanoAODv12")) nanoaod_version = 12;
+  if (Contains(in_dir, "22Sep2023")) nanoaod_version = 12;
   if (Contains(in_dir, "NanoAODv15")) nanoaod_version = 15;
  
   cout<<"Using NanoAOD version: "<<nanoaod_version<<endl;
@@ -811,6 +821,7 @@ void GetOptions(int argc, char *argv[]){
       {"in_dir",  required_argument, 0,'i'},
       {"out_dir", required_argument, 0,'o'},
       {"nent",    required_argument, 0, 0},
+      {"connect", no_argument, 0, 0},
       {"debug",    no_argument, 0, 'd'},
       {0, 0, 0, 0}
     };
@@ -838,7 +849,11 @@ void GetOptions(int argc, char *argv[]){
       optname = long_options[option_index].name;
       if(optname == "nent"){
         nent_test = atoi(optarg);
-      }else{
+      }
+      else if (optname == "connect"){
+        connect = true;
+      }
+      else{
         printf("Bad option! Found option name %s\n", optname.c_str());
         exit(1);
       }
