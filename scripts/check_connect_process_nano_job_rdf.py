@@ -5,8 +5,9 @@ import sys
 import ROOT
 import queue_system
 from ROOT import TChain
+import time
 
-
+checker_start_time = time.perf_counter()
 print("DEBUG CHECKER: started")
 
 
@@ -248,7 +249,7 @@ egamma_triggers = [
   'HLT_Ele20_eta2p1_WPLoose_Gsf', # In EventTools::SaveTriggerDecisions
   'HLT_Ele25_eta2p1_WPLoose_Gsf', # In EventTools::SaveTriggerDecisions
   'HLT_Ele27_eta2p1_WPLoose_Gsf', # In EventTools::SaveTriggerDecisions
-  'HLT_Ele20_eta2p1_WPTight_Gsf',
+  #'HLT_Ele20_eta2p1_WPTight_Gsf',
   'HLT_Ele15_IsoVVVL_PFHT350',
   'HLT_Ele15_IsoVVVL_PFHT400',
   'HLT_Ele15_IsoVVVL_PFHT450',
@@ -287,6 +288,16 @@ muon_triggers = [
   'HLT_Mu15_IsoVVVL_PFHT600',
   'HLT_Mu50_IsoVVVL_PFHT400',
   'HLT_Mu50_IsoVVVL_PFHT450',
+]
+
+doublemuon_triggers = [
+  'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL',
+  'HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL',
+  'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ',
+  'HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ',
+  'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8',
+  'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8',
+  'HLT_Mu37_TkMu27',
 ]
 
 jetht_triggers = [
@@ -554,6 +565,11 @@ if is_data:
     muon_triggers
   )
 
+  doublemuon_expr, available_doublemuon_triggers = MakeTriggerExpression(
+    available_columns,
+    doublemuon_triggers
+  )
+
   jetht_expr, available_jetht_triggers = MakeTriggerExpression(
     available_columns,
     jetht_triggers
@@ -595,6 +611,7 @@ if is_data:
     .Define("checker_pass_egamma_trigger", egamma_expr)
     .Define("checker_pass_doubleeg_trigger", doubleeg_expr)
     .Define("checker_pass_muon_trigger", muon_expr)
+    .Define("checker_pass_doublemuon_trigger", doublemuon_expr)
     .Define("checker_pass_jetht_trigger", jetht_expr)
   )
 
@@ -627,7 +644,8 @@ if is_data:
       "checker_pass_egamma_trigger"
       " || checker_pass_doubleeg_trigger"
       ")"
-      " && !checker_pass_muon_trigger",
+      " && !checker_pass_muon_trigger"
+      " && !checker_pass_doublemuon_trigger",
       "EGamma dataset trigger overlap removal"
     )
 
@@ -795,4 +813,5 @@ else:
   )
 
 print("DEBUG CHECKER: finished")
-
+checker_elapsed_time = time.perf_counter() - checker_start_time
+print("[Info] Checker elapsed time: {:.2f} sec".format(checker_elapsed_time))

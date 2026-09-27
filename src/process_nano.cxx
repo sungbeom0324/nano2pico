@@ -239,6 +239,8 @@ int main(int argc, char *argv[]){
   if (Contains(in_dir, "NanoAODv12")) nanoaod_version = 12;
   if (Contains(in_dir, "22Sep2023")) nanoaod_version = 12;
   if (Contains(in_dir, "NanoAODv15")) nanoaod_version = 15;
+  if (Contains(in_dir, "Run2024") && Contains(in_dir, "PromptReco")) nanoaod_version = 14; // tmp For test
+  if (Contains(in_dir, "Run2025") && Contains(in_dir, "PromptReco")) nanoaod_version = 14; // tmp For test
  
   cout<<"Using NanoAOD version: "<<nanoaod_version<<endl;
 

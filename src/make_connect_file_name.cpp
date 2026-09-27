@@ -10,7 +10,7 @@ string MakeConnectFileName(const string &in_dir, const string &in_file) {
   smatch matches;
 
   regex data_regex(
-    ".*/store/data/(Run20[^/]+)/([^/]+)/NANOAOD/([^/]+)/[^/]+/?$"
+    ".*/store/data/(Run20[^/]+)/([^/]+)/NANOAOD/([^/]+)/.*$"
   );
 
   if (!regex_match(in_dir, matches, data_regex)) {

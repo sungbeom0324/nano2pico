@@ -178,7 +178,7 @@ egamma_triggers = [
   'HLT_Ele20_eta2p1_WPLoose_Gsf', # In EventTools::SaveTriggerDecisions
   'HLT_Ele25_eta2p1_WPLoose_Gsf', # In EventTools::SaveTriggerDecisions
   'HLT_Ele27_eta2p1_WPLoose_Gsf', # In EventTools::SaveTriggerDecisions
-  'HLT_Ele20_eta2p1_WPTight_Gsf',
+  #'HLT_Ele20_eta2p1_WPTight_Gsf',
   'HLT_Ele15_IsoVVVL_PFHT350',
   'HLT_Ele15_IsoVVVL_PFHT400',
   'HLT_Ele15_IsoVVVL_PFHT450',
@@ -217,6 +217,16 @@ muon_triggers = [
   'HLT_Mu15_IsoVVVL_PFHT600',
   'HLT_Mu50_IsoVVVL_PFHT400',
   'HLT_Mu50_IsoVVVL_PFHT450',
+]
+
+doublemuon_triggers = [
+  'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL',
+  'HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL',
+  'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ',
+  'HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ',
+  'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8',
+  'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8',
+  'HLT_Mu37_TkMu27',
 ]
 
 jetht_triggers = [
@@ -422,6 +432,7 @@ if is_data:
     pass_egamma_trigger = CheckPassTriggers(infile, egamma_triggers)
     pass_doubleeg_trigger = CheckPassTriggers(infile, doubleeg_triggers)
     pass_muon_trigger = CheckPassTriggers(infile, muon_triggers)
+    pass_doublemuon_trigger = CheckPassTriggers(infile, doublemuon_triggers)
     pass_jetht_trigger = CheckPassTriggers(infile, jetht_triggers)
 
     # --------------------------------------------------------
@@ -442,7 +453,7 @@ if is_data:
       )
       and (
         not (pass_egamma_trigger or pass_doubleeg_trigger)
-        or pass_muon_trigger
+        or (pass_muon_trigger or doublemuon_triggers)
         # or pass_met_trigger
       )
     ):

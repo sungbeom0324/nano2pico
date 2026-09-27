@@ -18,6 +18,8 @@
 using namespace std;
 
 EventWeighter::EventWeighter(string year, const vector<float> &btag_wpts){
+  cout << "[EventWeighter] Initializing for year = " << year << endl; // debug
+
   string photon_idmapname = "Photon-ID-SF";
   string photon_csevmapname = "Photon-CSEV-SF";
   string btag_lightname = "deepJet_incl";
@@ -187,6 +189,22 @@ EventWeighter::EventWeighter(string year, const vector<float> &btag_wpts){
     key_                      = "2023PromptD";
     puName_                   = "Collisions2023_369803_370790_eraD_GoldenJson";
     btag_lightname            = "deepJet_light";
+
+    // Debug
+    cout << "[EventWeighter] Configuration selected" << endl;
+    cout << "  year             = " << year << endl;
+    cout << "  key              = " << key_ << endl;
+    cout << "  puName           = " << puName_ << endl;
+    cout << "  electron         = " << in_file_electron_ << endl;
+    cout << "  electron reco    = " << in_file_electron_reco_ << endl;
+    cout << "  photon           = " << in_file_photon_ << endl;
+    cout << "  photon low       = " << in_file_photon_low_ << endl;
+    cout << "  photon MC eff    = " << in_file_photon_mceff_ << endl;
+    cout << "  muon             = " << in_file_muon_ << endl;
+    cout << "  pileup           = " << in_file_pu_ << endl;
+    cout << "  btag             = " << in_file_btag_ << endl;
+    cout << "  btag MC eff      = " << in_file_btag_mceff_ << endl;
+
     cs_electron_bpixhole_     = correction::CorrectionSet::from_file(
         "data/zgamma/2023BPix/hzg_elid_2023BPixHole_scalefactors.json");
     cs_el_hole_iso0p10_       = correction::CorrectionSet::from_file(
@@ -238,6 +256,51 @@ EventWeighter::EventWeighter(string year, const vector<float> &btag_wpts){
     ph_shape_weighter_        = make_unique<rw_mmp_r3>();
     zgbkg_isr_weighter_       = make_unique<kinr3_weighter>();
   }
+  cout << "[EventWeighter] Loading electron: "
+       << in_file_electron_ << endl;
+  cs_electron_ = correction::CorrectionSet::from_file(in_file_electron_);
+  cout << "[EventWeighter] OK: electron" << endl;
+
+  cout << "[EventWeighter] Loading electron reco: "
+       << in_file_electron_reco_ << endl;
+  cs_electron_reco_ = correction::CorrectionSet::from_file(in_file_electron_reco_);
+  cout << "[EventWeighter] OK: electron reco" << endl;
+
+  cout << "[EventWeighter] Loading photon: "
+       << in_file_photon_ << endl;
+  cs_photon_ = correction::CorrectionSet::from_file(in_file_photon_);
+  cout << "[EventWeighter] OK: photon" << endl;
+
+  cout << "[EventWeighter] Loading photon low: "
+       << in_file_photon_low_ << endl;
+  cs_photon_low_ = correction::CorrectionSet::from_file(in_file_photon_low_);
+  cout << "[EventWeighter] OK: photon low" << endl;
+
+  cout << "[EventWeighter] Loading photon MC eff: "
+       << in_file_photon_mceff_ << endl;
+  cs_photon_mceff_ = correction::CorrectionSet::from_file(in_file_photon_mceff_);
+  cout << "[EventWeighter] OK: photon MC eff" << endl;
+
+  cout << "[EventWeighter] Loading muon: "
+       << in_file_muon_ << endl;
+  cs_muon_ = correction::CorrectionSet::from_file(in_file_muon_);
+  cout << "[EventWeighter] OK: muon" << endl;
+
+  cout << "[EventWeighter] Loading pileup: "
+       << in_file_pu_ << endl;
+  cs_pileup_ = correction::CorrectionSet::from_file(in_file_pu_);
+  cout << "[EventWeighter] OK: pileup" << endl;
+
+  cout << "[EventWeighter] Loading btag: "
+       << in_file_btag_ << endl;
+  cs_btag_ = correction::CorrectionSet::from_file(in_file_btag_);
+  cout << "[EventWeighter] OK: btag" << endl;
+
+  cout << "[EventWeighter] Loading btag MC eff: "
+       << in_file_btag_mceff_ << endl;
+  cs_btag_mceff_ = correction::CorrectionSet::from_file(in_file_btag_mceff_);
+  cout << "[EventWeighter] OK: btag MC eff" << endl;
+  /*
   cs_electron_              = correction::CorrectionSet::from_file(in_file_electron_);
   cs_electron_reco_         = correction::CorrectionSet::from_file(in_file_electron_reco_);
   cs_photon_                = correction::CorrectionSet::from_file(in_file_photon_);
@@ -247,6 +310,7 @@ EventWeighter::EventWeighter(string year, const vector<float> &btag_wpts){
   cs_pileup_                = correction::CorrectionSet::from_file(in_file_pu_);
   cs_btag_                  = correction::CorrectionSet::from_file(in_file_btag_);
   cs_btag_mceff_            = correction::CorrectionSet::from_file(in_file_btag_mceff_);
+  */
   if(year == "2016APV" || year == "2016" || year == "2017" || year == "2018"){
     cs_jetpuid_               = correction::CorrectionSet::from_file(in_file_jetpuid_);
   }
