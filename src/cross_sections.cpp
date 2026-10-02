@@ -6,7 +6,7 @@
 using namespace std;
 
 namespace xsec{
-  //Cross sections for primary signals and backgrounds for H->Zgamma updated 2024-03-14. Other xsec values not guaranteed.
+  //Cross sections for primary signals and backgrounds for H->Zgamma updated 2026-06-18. Other xsec values not guaranteed.
   float crossSection(const TString &file, int year){
     float xsec(-999999.), Htobb(0.5824), HToZG(0.001533), ZToLL(0.100974);
     float HToGG(0.00227), HToMM(0.000218), HToTT(0.06256);
@@ -14,20 +14,20 @@ namespace xsec{
     float WToLNu(0.3258), HToWW(0.2152), WToQQ(0.6742);
     float HToZG_onshellfrac(0.96934);
 
-    float xs_ggh = 48.58;
-    float xs_vbf = 3.782;
-    float xs_wmh = 0.5328;
-    float xs_wph = 0.8400;
-    float xs_z_h = 0.8839;
-    float xs_tth = 0.5071;
+    float xs_ggh = 48.09;
+    float xs_vbf = 3.813;
+    float xs_wmh = 0.533;
+    float xs_wph = 0.850;
+    float xs_z_h = 0.888;
+    float xs_tth = 0.531;
     if (year >= 2022) {
-      //13.6 TeV interrim XS values from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/LHCHWG136TeVxsec_extrap
-      xs_ggh = 52.23;
-      xs_vbf = 4.078;
-      xs_wmh = 0.5677;
-      xs_wph = 0.8889;
-      xs_z_h = 0.9439;
-      xs_tth = 0.5700;
+      //13.6 TeV from Report 5 https://gitlab.cern.ch/LHCHIGGSXS/LHCHXSWG1/crosssections
+      xs_ggh = 51.72;
+      xs_vbf = 4.112;
+      xs_wmh = 0.568;
+      xs_wph = 0.900;
+      xs_z_h = 0.949;
+      xs_tth = 0.593;
     }
 
     if (year == 2016) {
@@ -384,11 +384,11 @@ namespace xsec{
 
         if(file.Contains("DYJetsToLL_M-50_TuneCP5"))      xsec = 5558.0;
         if(file.Contains("DYto2L-2Jets_MLL-50_TuneCP5"))  xsec = 6688.0;
-	//2024
-	if(file.Contains("DYto2E-2Jets_Bin-MLL-50_TuneCP5_13p6TeV"))  xsec = 2213.0;
-	if(file.Contains("DYto2Mu-2Jets_Bin-MLL-50_TuneCP5_13p6TeV"))  xsec = 2221.0;
-	if(file.Contains("DYto2Tau-2Jets_Bin-MLL-50_TuneCP5_13p6TeV"))  xsec = 1965.0;
-	if(file.Contains("DYGto2LG-1Jets_Bin-MLL-50_TuneCP5_13p6TeV"))  xsec = 126.7; //not in XSDB, ran genXsecAnalyzer script on miniAOD files
+        //2024
+        if(file.Contains("DYto2E-2Jets_Bin-MLL-50_TuneCP5_13p6TeV"))  xsec = 2213.0;
+        if(file.Contains("DYto2Mu-2Jets_Bin-MLL-50_TuneCP5_13p6TeV"))  xsec = 2221.0;
+        if(file.Contains("DYto2Tau-2Jets_Bin-MLL-50_TuneCP5_13p6TeV"))  xsec = 1965.0;
+        if(file.Contains("DYGto2LG-1Jets_Bin-MLL-50_TuneCP5_13p6TeV"))  xsec = 126.7; //not in XSDB, ran genXsecAnalyzer script on miniAOD files
 
         if(file.Contains("DYGto2LG-1Jets_MLL-50_PTG-10to100_TuneCP5_13p6TeV"))  xsec = 126.6;
         if(file.Contains("DYGto2LG-1Jets_MLL-50_PTG-100to200_TuneCP5_13p6TeV")) xsec = 0.3493;

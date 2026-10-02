@@ -4,6 +4,7 @@ import argparse
 import csv
 import json
 import re
+import shlex
 import statistics
 from collections import Counter
 from datetime import datetime
@@ -103,7 +104,7 @@ def parse_args():
         "--failed-log-list",
         default="failed_nano_logs.txt",
         help=(
-            "Output text file containing final stdout logs for "
+            "Output tab-separated list of Condor event logs and input NanoAOD files for "
             "Nano2Pico jobs whose job_status is fail."
         ),
     )
@@ -176,7 +177,7 @@ def filename_job_id(path):
     """
 
     m = re.match(
-        r"^(?:out|log)\.(\d+)\.(\d+)(?:\..*)?$",
+        r"^(?:out|err|log)\.(\d+)\.(\d+)(?:\..*)?$",
         path.name,
     )
 
@@ -262,6 +263,7 @@ def load_nano_jobs(json_path):
                     "index": index,
                     "status": job.get("job_status"),
                     "identifier": identifier,
+                    "command": job.get("command", ""),
                 }
             )
 
@@ -949,48 +951,48 @@ def print_cluster_summary(cluster, records):
 # Failed Nano2Pico log list
 # ============================================================
 
-def write_failed_nano_logs(
-    records,
-    output_file="failed_nano_logs.txt",
-):
+def input_files_from_command(command):
+    """Read process_nano arguments without executing the command."""
+    try:
+        tokens = shlex.split(command or "")
+    except ValueError:
+        return []
+    directory = ""
+    filenames = []
+    for index, token in enumerate(tokens[:-1]):
+        if token == "-i":
+            directory = tokens[index + 1]
+        elif token == "-f":
+            filenames.append(tokens[index + 1])
+    return [name if name.startswith(("/", "root://")) or not directory
+            else directory.rstrip("/") + "/" + name for name in filenames]
 
-    failed_records = [
-        r for r in records
-        if r["nano_status"] == "fail"
-    ]
 
-    with open(output_file, "w") as f:
+def write_failed_nano_logs(nano_info, log_index, output_file="failed_nano_logs.txt"):
+    """Include every recorded failure, even when its final log is missing."""
+    jobs = list(nano_info["logical_jobs"])
+    jobs.extend({
+        "logical_index": j["index"], "job_status": j["status"],
+        "job_identifier": j["identifier"], "command": j["command"],
+    } for j in nano_info["missing_identifier"])
+    failed_jobs = [j for j in jobs if j["job_status"] == "fail"]
 
-        for r in failed_records:
-
-            # Prefer stdout log: out.<cluster>.<proc>.log
-            out_files = [
-                path
-                for path in r["files"]
-                if Path(path).name.startswith("out.")
-            ]
-
-            if out_files:
-
-                for path in out_files:
-                    f.write(f"{path}\n")
-
-            else:
-
-                # Fallback if stdout log is not available.
-                for path in r["files"]:
-                    f.write(f"{path}\n")
+    with open(output_file, "w", newline="") as target:
+        writer = csv.writer(target, delimiter="\t")
+        writer.writerow(["condor_log", "input_nanoaod"])
+        for job in sorted(failed_jobs, key=lambda j: j["logical_index"]):
+            parsed_id = parse_nano_identifier(job["job_identifier"])
+            paths = log_index.get((parsed_id["cluster"], parsed_id["proc"]), []) if parsed_id else []
+            condor_logs = [str(p) for p in paths if p.name.startswith("log.")
+                           or (p.name.startswith("out.") and p.name.endswith(".log"))]
+            if not condor_logs:
+                condor_logs = [f"MISSING_LOG ({job['job_identifier']})"]
+            inputs = input_files_from_command(job["command"]) or ["UNKNOWN_INPUT"]
+            writer.writerow([";".join(condor_logs), ";".join(inputs)])
 
     print()
-    print(
-        f"Failed Nano2Pico jobs : "
-        f"{len(failed_records)}"
-    )
-
-    print(
-        f"Failed log list       : "
-        f"{output_file}"
-    )
+    print(f"Failed Nano2Pico jobs : {len(failed_jobs)}")
+    print(f"Failed log list       : {output_file}")
 
 
 # ============================================================
@@ -1001,7 +1003,6 @@ def print_json_summary(
     nano_info,
     records,
     missing_logs,
-    failed_log_list,
 ):
 
     logical_jobs = nano_info["logical_jobs"]
@@ -1169,14 +1170,6 @@ def print_json_summary(
                 f"id={item['identifier']}"
             )
 
-    # --------------------------------------------------------
-    # Save failed job logs to a separate text file
-    # --------------------------------------------------------
-
-    write_failed_nano_logs(
-        records,
-        failed_log_list,
-    )
 
 
 # ============================================================
@@ -1579,8 +1572,9 @@ def run_json_mode(
         nano_info,
         records,
         missing_logs,
-        args.failed_log_list,
     )
+
+    write_failed_nano_logs(nano_info, log_index, args.failed_log_list)
 
     return records, "Nano2Pico final trials"
 

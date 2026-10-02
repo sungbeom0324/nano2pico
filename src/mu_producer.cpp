@@ -43,6 +43,15 @@ MuonProducer::MuonProducer(string year_, bool isData_, float nanoaod_version_, s
         "data/zgamma/2024/muon_scalesmearing.json");
     run3 = true;
   }
+  else if (year=="2025") {
+    cs_scare_ = correction::CorrectionSet::from_file(
+        "data/zgamma/2025/muon_scalesmearing.json");
+  }
+  else if (year=="2026") {
+    cout<<"WARNING: Muon SaS not implemented yet for 2026. Defaulting to 2025"<<std::endl;
+    cs_scare_ = correction::CorrectionSet::from_file(
+        "data/zgamma/2025/muon_scalesmearing.json");
+  }
   else if(year=="2016" || year=="2016APV" || year=="2017" || year=="2018"){
     std::cout << "Run 2 sample, ScaRe file is not used nor set. " << std::endl;
   } else {
@@ -111,6 +120,19 @@ vector<int> MuonProducer::WriteMuons(nano_tree &nano, pico_tree &pico, vector<in
     if (!run3) {
       //Rochester corrections, see https://github.com/cms-nanoAOD/nanoAOD-tools/blob/master/python/postprocessing/modules/common/muonScaleResProducer.py
       float pt = nano.Muon_pt()[imu];
+      muon_err_corr.push_back(nano.Muon_ptErr()[imu]);      
+      if(pt>200.f){
+        if(isData) muon_pt_corr.push_back(pt);//https://muon-wiki.docs.cern.ch/guidelines/corrections/#high-pt-momentum-scale The recommendations for high pT muons are complicated. Only 3% of muons have pT>200
+        else {
+          muon_pt_corr.push_back(pt);
+          muon_pt_scaleup.push_back(pt*1.5);//placeholder 50% systematics.
+          muon_pt_scaledn.push_back(pt*0.5);
+          muon_pt_resup.push_back(pt*1.5);
+          muon_pt_resdn.push_back(pt*0.5);
+        }
+        continue;
+      }
+      
       muon_err_corr.push_back(nano.Muon_ptErr()[imu]);
       float scale_sf = rc.kScaleDT(charge,pt,eta,phi);
       if (isData) {
@@ -146,14 +168,27 @@ vector<int> MuonProducer::WriteMuons(nano_tree &nano, pico_tree &pico, vector<in
     else {
       float pt = nano.Muon_bsConstrainedPt()[imu];
       muon_err_corr.push_back(nano.Muon_bsConstrainedPtErr()[imu]);
+      if(pt>200.f){
+        if(isData) muon_pt_corr.push_back(pt);//https://muon-wiki.docs.cern.ch/guidelines/corrections/#high-pt-momentum-scale The recommendations for high pT muons are complicated. Leaving things like this for now.
+        else {
+          muon_pt_corr.push_back(pt);
+          muon_pt_scaleup.push_back(pt*1.5);
+          muon_pt_scaledn.push_back(pt*0.5);
+          muon_pt_resup.push_back(pt*1.5);
+          muon_pt_resdn.push_back(pt*0.5);
+        }
+        continue;
+      }
       if (isData) {
         muon_pt_corr.push_back(scarekit::pt_scale(1, pt, eta, phi,
             charge, cs_scare_, pt_thresh));
       }
       else {
+        int evtNumber = nano.event();
+        int lumiNumber = nano.luminosityBlock();
         float sca_pt = scarekit::pt_scale(0, pt, eta, phi, charge, cs_scare_, pt_thresh);
-        float re_pt = scarekit::pt_resol(sca_pt, eta, 
-            static_cast<float>(nTrackerLayers), cs_scare_, pt_thresh);
+        float re_pt = scarekit::pt_resol(sca_pt, eta, phi, 
+            static_cast<float>(nTrackerLayers), evtNumber, lumiNumber, cs_scare_, pt_thresh);
         muon_pt_corr.push_back(re_pt);
         muon_pt_scaleup.push_back(scarekit::pt_scale_var(re_pt, eta, phi, 
             charge, "up", cs_scare_));

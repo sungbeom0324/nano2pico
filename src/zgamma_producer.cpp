@@ -124,7 +124,7 @@ ZGammaVarProducer::RefitResults ZGammaVarProducer::PerformKinematicRefit(
   int idx_l2 = pico.out_ll_i2()[ll_variation];
   float l1_pt = pico.out_ll_l1_pt()[ll_variation];
   float l2_pt = pico.out_ll_l2_pt()[ll_variation];
-
+  int flavor = pico.out_ll_lepid()[0];
   if(pico.out_ll_lepid()[0] == 13){
     int idx_fsr1, idx_fsr2;
 
@@ -174,8 +174,7 @@ ZGammaVarProducer::RefitResults ZGammaVarProducer::PerformKinematicRefit(
     leptons_pterr_map[0] = pico.out_el_energyErr()[idx_l1]*l1.Pt()/l1.P();
     leptons_pterr_map[1] = pico.out_el_energyErr()[idx_l2]*l2.Pt()/l2.P();
   }
-
-  kinZfitter->Setup(leptons_map, fsrphotons_map, leptons_pterr_map);
+  kinZfitter->Setup(leptons_map, fsrphotons_map, leptons_pterr_map, flavor);
   kinZfitter->KinRefitZ1();
   refit_leptons = kinZfitter->GetRefitP4s();
   RefitResults result = {refit_leptons[0], refit_leptons[1], status, 
@@ -706,7 +705,7 @@ void ZGammaVarProducer::WriteZGammaVars(pico_tree &pico, bool is_signal){
   if(pico.out_ll_m().at(pico.out_llphoton_ill().at(0))>=80.f && pico.out_ll_m().at(pico.out_llphoton_ill().at(0))<=100.f){baseBit+= 0b000000100000;}
   if(pico.out_photon_pt().at(pico.out_llphoton_iph().at(0))/pico.out_llphoton_m().at(0) >=15.0f/110.f){baseBit+= 0b000000010000;}
   if(pico.out_ll_m().at(pico.out_llphoton_ill().at(0))+pico.out_llphoton_m().at(0) > 185.f){baseBit+= 0b000000001000;}
-  if(pico.out_llphoton_m().at(0)>=100.f && pico.out_llphoton_m().at(0)<=180.f){baseBit+= 0b000000000100;}
+  if(pico.out_llphoton_m().at(0)>=90.f && pico.out_llphoton_m().at(0)<=180.f){baseBit+= 0b000000000100;}
   if(pico.out_pass()){baseBit+=0b000000000010;}
   if(pico.out_llphoton_m().at(0)<=120.f || pico.out_llphoton_m().at(0)>=130.f){baseBit+= 0b000000000001;}
   pico.out_zg_cutBitMap() = baseBit;
