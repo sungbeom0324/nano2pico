@@ -230,7 +230,7 @@ int main(int argc, char *argv[]){
   // Find nanoAOD version
   float nanoaod_version = -1;
   std::smatch nanoad_version_matches;
-  bool version_found = std::regex_search(in_dir, nanoad_version_matches, std::regex("NanoAOD(?:APVv|v)(\\d+p\\d+|\\d+)")); // test
+  bool version_found = std::regex_search(file_name, nanoad_version_matches, std::regex("NanoAOD(?:APVv|v)(\\d+p\\d+|\\d+)")); // test
   if (version_found) nanoaod_version = std::stof(std::regex_replace(nanoad_version_matches[1].str(), std::regex("p"), "."));
   else {
     bool is_nanoAODv7_found = std::regex_search(in_file, nanoad_version_matches, std::regex("02Apr2020"));
@@ -238,10 +238,8 @@ int main(int argc, char *argv[]){
   }
   if (Contains(in_dir, "NanoAODv9UCSB")) nanoaod_version = 9.5;
   if (Contains(in_dir, "NanoAODv12")) nanoaod_version = 12;
-  if (Contains(in_dir, "22Sep2023")) nanoaod_version = 12;
   if (Contains(in_dir, "NanoAODv15")) nanoaod_version = 15;
-  if (Contains(in_dir, "Run2024") && Contains(in_dir, "PromptReco")) nanoaod_version = 15; // tmp For test
-  if (Contains(in_dir, "Run2025") && Contains(in_dir, "PromptReco")) nanoaod_version = 15; // tmp For test
+  if (Contains(in_dir, "Run2024")) nanoaod_version = 15; // tmp solutio : upstream/master used local dir dependency.
  
   cout<<"Using NanoAOD version: "<<nanoaod_version<<endl;
 
