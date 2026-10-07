@@ -239,7 +239,7 @@ int main(int argc, char *argv[]){
   if (Contains(in_dir, "NanoAODv9UCSB")) nanoaod_version = 9.5;
   if (Contains(in_dir, "NanoAODv12")) nanoaod_version = 12;
   if (Contains(in_dir, "NanoAODv15")) nanoaod_version = 15;
-  if (Contains(in_dir, "Run2024")) nanoaod_version = 15; // tmp solutio : upstream/master used local dir dependency.
+  if (Contains(in_dir, "NANOv15")) nanoaod_version = 15;
  
   cout<<"Using NanoAOD version: "<<nanoaod_version<<endl;
 

@@ -320,6 +320,7 @@ EventWeighter::EventWeighter(string year, bool isSignal, const vector<float> &bt
        << in_file_electron_reco_ << endl;
   cs_electron_reco_ = correction::CorrectionSet::from_file(in_file_electron_reco_);
   cout << "[EventWeighter] OK: electron reco" << endl;
+  cs_electron_mceff_ = correction::CorrectionSet::from_file(in_file_electron_mceff_);
 
   cout << "[EventWeighter] Loading photon: "
        << in_file_photon_ << endl;
