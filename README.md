@@ -175,6 +175,38 @@ Here the slim name must correspond to a txt file in the slim_rules folder, so in
 
 Similarly to above, one can optionally use `--overwrite` or `--tag`.
 
+### (NEW) Using Batch system with CMSconnect
+
+DATA processing with [CMSconnect](https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookCMSConnect) is currently available and under validation.
+
+The workflow below runs on the USCMS server and requires and account. ([link](https://registry.cilogon.org/registry/co_petitions/start/coef:577))
+
+~~~~bash
+# First, few edits for batch modules.
+vi modules/queue_system/libs/connect_condor_queue.py # Edit line 151 to indicate your remote pico storage.
+vi modules/queue_system/bin/auto_submit_jobs.py # Replace "import ucsb_condor_queue" to "import connect_condor_queue"
+
+source set_env_uscms.sh
+# Prepare filelist.txt to process. For example,
+dasgoclient --query=“file dataset= /EGamma0/Run2024C-MINIv6NANOv15-v1/NANOAOD” >> filelist.txt
+
+scons
+tar -czf data.tar.gz data
+tar -czf txt.tar.gz txt
+
+python3 ./scripts/write_connect_process_nano_cmnds.py \
+        --connect \
+        --list_format filename \
+        --dataset_list filelist.txt
+
+# Recommand to submit in tmux. Don't forget source set_env_uscms.sh.
+auto_submit_jobs.py process_nano_cmnds.json \
+        -c scripts/check_connect_process_nano_job_simple.py \
+        -ci kernel/<your last compiled version>/run/process_nano.exe,txt.tar.gz,data.tar.gz
+
+python3 scripts/get_condor_timing.py --jobs-json auto_process_nano_cmnds.json --plot
+~~~~
+
 ## Description of pico branches
 
 This section describes the event content (branches) of pico n-tuples.
