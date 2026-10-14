@@ -179,7 +179,7 @@ Similarly to above, one can optionally use `--overwrite` or `--tag`.
 
 DATA processing with [CMSconnect](https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookCMSConnect) is currently available and under validation.
 
-The workflow below runs on the USCMS server and requires and account. ([link](https://registry.cilogon.org/registry/co_petitions/start/coef:577))
+The workflow below runs on the USCMS server and requires an account. ([link](https://registry.cilogon.org/registry/co_petitions/start/coef:577))
 
 ~~~~bash
 # First, few edits for batch modules.
