@@ -311,52 +311,7 @@ EventWeighter::EventWeighter(string year, bool isSignal, const vector<float> &bt
     ph_shape_weighter_        = make_unique<photon_weighter_mmp2425>();
     zgbkg_isr_weighter_       = make_unique<kinr3_weighter>();
   }
-  cout << "[EventWeighter] Loading electron: "
-       << in_file_electron_ << endl;
-  cs_electron_ = correction::CorrectionSet::from_file(in_file_electron_);
-  cout << "[EventWeighter] OK: electron" << endl;
 
-  cout << "[EventWeighter] Loading electron reco: "
-       << in_file_electron_reco_ << endl;
-  cs_electron_reco_ = correction::CorrectionSet::from_file(in_file_electron_reco_);
-  cout << "[EventWeighter] OK: electron reco" << endl;
-  cs_electron_mceff_ = correction::CorrectionSet::from_file(in_file_electron_mceff_);
-
-  cout << "[EventWeighter] Loading photon: "
-       << in_file_photon_ << endl;
-  cs_photon_ = correction::CorrectionSet::from_file(in_file_photon_);
-  cout << "[EventWeighter] OK: photon" << endl;
-
-  cout << "[EventWeighter] Loading photon low: "
-       << in_file_photon_low_ << endl;
-  cs_photon_low_ = correction::CorrectionSet::from_file(in_file_photon_low_);
-  cout << "[EventWeighter] OK: photon low" << endl;
-
-  cout << "[EventWeighter] Loading photon MC eff: "
-       << in_file_photon_mceff_ << endl;
-  cs_photon_mceff_ = correction::CorrectionSet::from_file(in_file_photon_mceff_);
-  cout << "[EventWeighter] OK: photon MC eff" << endl;
-
-  cout << "[EventWeighter] Loading muon: "
-       << in_file_muon_ << endl;
-  cs_muon_ = correction::CorrectionSet::from_file(in_file_muon_);
-  cout << "[EventWeighter] OK: muon" << endl;
-
-  cout << "[EventWeighter] Loading pileup: "
-       << in_file_pu_ << endl;
-  cs_pileup_ = correction::CorrectionSet::from_file(in_file_pu_);
-  cout << "[EventWeighter] OK: pileup" << endl;
-
-  cout << "[EventWeighter] Loading btag: "
-       << in_file_btag_ << endl;
-  cs_btag_ = correction::CorrectionSet::from_file(in_file_btag_);
-  cout << "[EventWeighter] OK: btag" << endl;
-
-  cout << "[EventWeighter] Loading btag MC eff: "
-       << in_file_btag_mceff_ << endl;
-  cs_btag_mceff_ = correction::CorrectionSet::from_file(in_file_btag_mceff_);
-  cout << "[EventWeighter] OK: btag MC eff" << endl;
-  /*
   cs_electron_              = correction::CorrectionSet::from_file(in_file_electron_);
   cs_electron_reco_         = correction::CorrectionSet::from_file(in_file_electron_reco_);//add this for mceff
   cs_electron_mceff_        = correction::CorrectionSet::from_file(in_file_electron_mceff_);
@@ -367,7 +322,7 @@ EventWeighter::EventWeighter(string year, bool isSignal, const vector<float> &bt
   cs_pileup_                = correction::CorrectionSet::from_file(in_file_pu_);
   cs_btag_                  = correction::CorrectionSet::from_file(in_file_btag_);
   cs_btag_mceff_            = correction::CorrectionSet::from_file(in_file_btag_mceff_);
-  */
+
   if(year == "2016APV" || year == "2016" || year == "2017" || year == "2018"){
     cs_jetpuid_               = correction::CorrectionSet::from_file(in_file_jetpuid_);
   }
