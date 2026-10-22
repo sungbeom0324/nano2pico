@@ -69,7 +69,7 @@ void WriteDataQualityFilters(nano_tree& nano, pico_tree& pico);
 void CopyTriggerDecisions(nano_tree& nano, pico_tree& pico);
 void GetOptions(int argc, char *argv[]);
 MCMetadata GetMCMetadata(string filename);
-MCMetadata GetMCMetadataFromJson(string in_dir, string in_file, 
+MCMetadata GetMCMetadataFromJson(string in_dir, string file_name,
                                  string norm_fname);
 
 int main(int argc, char *argv[]){
@@ -326,8 +326,21 @@ int main(int argc, char *argv[]){
   if (!isData) {
     if (norm_file=="") 
       mc_metadata = GetMCMetadata(in_path);
-    else
-      mc_metadata = GetMCMetadataFromJson(in_dir, in_file, norm_file);
+    else {
+      string norm_dir = in_dir;
+      if (connect) {
+        // Match the dataset path, excluding the local prefix and file shard.
+        std::smatch matches;
+        if (!std::regex_match(in_dir, matches, std::regex(
+            ".*(/store/mc/[^/]+/[^/]+/NANOAODSIM/[^/]+)(/.*)?"))) {
+          cout << "ERROR: Could not parse CMSConnect normalization directory: "
+               << in_dir << endl;
+          exit(1);
+        }
+        norm_dir = matches[1].str();
+      }
+      mc_metadata = GetMCMetadataFromJson(norm_dir, file_name, norm_file);
+    }
   }
   const string ctr = "central";
   const vector<string> updn = {"up","down"};
@@ -355,7 +368,7 @@ int main(int argc, char *argv[]){
 
   double cross_section(1.0); // fb
   if (!isData)
-    cross_section = xsec::crossSection(in_file, year)*1000.0;
+    cross_section = xsec::crossSection(file_name, year)*1000.0;
 
   // Initialize trees
   gErrorIgnoreLevel=6000; // Turns off ROOT errors due to missing branches
@@ -764,21 +777,21 @@ MCMetadata GetMCMetadata(string filename) {
  * find_normalization.py
  *
  * @param in_dir directory in which NanoAOD file is stored
- * @param in_file input NanoAOD filename
+ * @param file_name input NanoAOD filename
  * @param norm_fname json with normalization info
  *
  * @return MC Metadata consisting of genEventSumw and LHEScaleSumw
  */
-MCMetadata GetMCMetadataFromJson(string in_dir, string in_file, 
+MCMetadata GetMCMetadataFromJson(string in_dir, string file_name,
                                  string norm_fname) {
   string tag;
-  string::size_type pos = in_file.find("__");
+  string::size_type pos = file_name.find("__");
   if (pos != string::npos) {
-    tag = in_file.substr(0,pos);
+    tag = file_name.substr(0,pos);
   }
   pos = tag.find("_ext");
   if (pos != string::npos) {
-    tag = in_file.substr(0,pos);
+    tag = file_name.substr(0,pos);
   }
   ifstream norm_file(norm_fname);
   nlohmann::json norm_json = nlohmann::json::parse(norm_file);

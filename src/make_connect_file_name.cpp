@@ -12,8 +12,12 @@ string MakeConnectFileName(const string &in_dir, const string &in_file) {
   regex data_regex(
     ".*/store/data/(Run20[^/]+)/([^/]+)/NANOAOD/([^/]+)/.*$"
   );
+  regex mc_regex(
+    ".*/store/mc/([^/]+)/([^/]+)/NANOAODSIM/([^/]+)/.*$"
+  );
 
-  if (!regex_match(in_dir, matches, data_regex)) {
+  if (!regex_match(in_dir, matches, data_regex) &&
+      !regex_match(in_dir, matches, mc_regex)) {
     cout << "ERROR: Could not parse CMSConnect input directory: "
          << in_dir << endl;
     exit(1);

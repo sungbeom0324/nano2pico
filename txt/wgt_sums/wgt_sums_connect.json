@@ -1,0 +1,114 @@
+{
+  "/store/mc/RunIISummer20UL16NanoAODAPVv9/ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8/NANOAODSIM/106X_mcRun2_asymptotic_preVFP_v11-v1": {
+    "ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8": {
+      "genEventSumw": 26436873975.844982,
+      "LHEScaleSumw0": 206.65978504106684,
+      "LHEScaleSumw1": 215.02567594250155,
+      "LHEScaleSumw2": 219.59063887926058,
+      "LHEScaleSumw3": 198.95924096765273,
+      "LHEScaleSumw4": 209.00000002746552,
+      "LHEScaleSumw5": 215.4362694483225,
+      "LHEScaleSumw6": 192.75608176093283,
+      "LHEScaleSumw7": 204.06334393539854,
+      "LHEScaleSumw8": 211.93446479817766
+    }
+  },
+  "/store/mc/RunIISummer20UL16NanoAODAPVv9/ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8/NANOAODSIM/106X_mcRun2_asymptotic_preVFP_v11_ext1-v2": {
+    "ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8": {
+      "genEventSumw": 26436873975.844982,
+      "LHEScaleSumw0": 206.65978504106684,
+      "LHEScaleSumw1": 215.02567594250155,
+      "LHEScaleSumw2": 219.59063887926058,
+      "LHEScaleSumw3": 198.95924096765273,
+      "LHEScaleSumw4": 209.00000002746552,
+      "LHEScaleSumw5": 215.4362694483225,
+      "LHEScaleSumw6": 192.75608176093283,
+      "LHEScaleSumw7": 204.06334393539854,
+      "LHEScaleSumw8": 211.93446479817766
+    }
+  },
+  "/store/mc/RunIISummer20UL16NanoAODv9/ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8/NANOAODSIM/106X_mcRun2_asymptotic_v17-v1": {
+    "ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8": {
+      "genEventSumw": 26525996243.718525,
+      "LHEScaleSumw0": 195.762903393579,
+      "LHEScaleSumw1": 203.757798428776,
+      "LHEScaleSumw2": 208.1545361530419,
+      "LHEScaleSumw3": 188.43709073382163,
+      "LHEScaleSumw4": 198.00000002756772,
+      "LHEScaleSumw5": 204.1512283518967,
+      "LHEScaleSumw6": 182.54160382638665,
+      "LHEScaleSumw7": 193.2916708451092,
+      "LHEScaleSumw8": 200.78969887108994
+    }
+  },
+  "/store/mc/RunIISummer20UL16NanoAODv9/ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8/NANOAODSIM/106X_mcRun2_asymptotic_v17_ext1-v2": {
+    "ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8": {
+      "genEventSumw": 26525996243.718525,
+      "LHEScaleSumw0": 195.762903393579,
+      "LHEScaleSumw1": 203.757798428776,
+      "LHEScaleSumw2": 208.1545361530419,
+      "LHEScaleSumw3": 188.43709073382163,
+      "LHEScaleSumw4": 198.00000002756772,
+      "LHEScaleSumw5": 204.1512283518967,
+      "LHEScaleSumw6": 182.54160382638665,
+      "LHEScaleSumw7": 193.2916708451092,
+      "LHEScaleSumw8": 200.78969887108994
+    }
+  },
+  "/store/mc/RunIISummer20UL17NanoAODv9/ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8/NANOAODSIM/106X_mc2017_realistic_v9-v1": {
+    "ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8": {
+      "genEventSumw": 52882971143.902885,
+      "LHEScaleSumw0": 399.3987621325646,
+      "LHEScaleSumw1": 415.70647963177913,
+      "LHEScaleSumw2": 424.67696305785694,
+      "LHEScaleSumw3": 384.48606401936627,
+      "LHEScaleSumw4": 404.0,
+      "LHEScaleSumw5": 416.5556137723914,
+      "LHEScaleSumw6": 372.48308001008246,
+      "LHEScaleSumw7": 394.4239996422692,
+      "LHEScaleSumw8": 409.73125492162467
+    }
+  },
+  "/store/mc/RunIISummer20UL17NanoAODv9/ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8/NANOAODSIM/106X_mc2017_realistic_v9_ext1-v2": {
+    "ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8": {
+      "genEventSumw": 52882971143.902885,
+      "LHEScaleSumw0": 399.3987621325646,
+      "LHEScaleSumw1": 415.70647963177913,
+      "LHEScaleSumw2": 424.67696305785694,
+      "LHEScaleSumw3": 384.48606401936627,
+      "LHEScaleSumw4": 404.0,
+      "LHEScaleSumw5": 416.5556137723914,
+      "LHEScaleSumw6": 372.48308001008246,
+      "LHEScaleSumw7": 394.4239996422692,
+      "LHEScaleSumw8": 409.73125492162467
+    }
+  },
+  "/store/mc/RunIISummer20UL18NanoAODv9/ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8/NANOAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1": {
+    "ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8": {
+      "genEventSumw": 53545878491.06043,
+      "LHEScaleSumw0": 417.1824594554437,
+      "LHEScaleSumw1": 434.2707317028463,
+      "LHEScaleSumw2": 443.7114860263304,
+      "LHEScaleSumw3": 401.571812684688,
+      "LHEScaleSumw4": 422.0,
+      "LHEScaleSumw5": 435.1744327267168,
+      "LHEScaleSumw6": 389.00643210487357,
+      "LHEScaleSumw7": 411.9619064760771,
+      "LHEScaleSumw8": 428.00128784053743
+    }
+  },
+  "/store/mc/RunIISummer20UL18NanoAODv9/ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8/NANOAODSIM/106X_upgrade2018_realistic_v16_L1v1_ext1-v2": {
+    "ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8": {
+      "genEventSumw": 53545878491.06043,
+      "LHEScaleSumw0": 417.1824594554437,
+      "LHEScaleSumw1": 434.2707317028463,
+      "LHEScaleSumw2": 443.7114860263304,
+      "LHEScaleSumw3": 401.571812684688,
+      "LHEScaleSumw4": 422.0,
+      "LHEScaleSumw5": 435.1744327267168,
+      "LHEScaleSumw6": 389.00643210487357,
+      "LHEScaleSumw7": 411.9619064760771,
+      "LHEScaleSumw8": 428.00128784053743
+    }
+  }
+}
