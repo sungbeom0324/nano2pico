@@ -120,7 +120,7 @@ print(
 
 
 # ------------------------------------------------------------
-# Parse CMS data path
+# Parse CMS data or MC path
 #
 # Example:
 #
@@ -154,13 +154,15 @@ try:
 
   store_index = path_parts.index("store")
 
-  if path_parts[store_index + 1] != "data":
+  sample_type = path_parts[store_index + 1]
+  expected_tier = {"data": "NANOAOD", "mc": "NANOAODSIM"}.get(sample_type)
+  if expected_tier is None:
     raise ValueError
 
   era = path_parts[store_index + 2]
   dataset = path_parts[store_index + 3]
 
-  if path_parts[store_index + 4] != "NANOAOD":
+  if path_parts[store_index + 4] != expected_tier:
     raise ValueError
 
   campaign = path_parts[store_index + 5]
