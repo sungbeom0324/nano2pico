@@ -1,0 +1,6 @@
+/store/data/Run2025D/EGamma0/NANOAOD/PromptReco-v1/000/394/402/00000/2c8f97e2-8718-42b6-b408-0a84452b6be4.root
+/store/data/Run2025C/EGamma1/NANOAOD/PromptReco-v2/000/393/111/00000/13b1c26a-c104-45ad-bf9a-e03bf99897fd.root
+/store/data/Run2025C/EGamma2/NANOAOD/PromptReco-v1/000/392/293/00000/b1724793-8971-40f3-852a-5f410d3f972e.root
+/store/data/Run2025C/EGamma3/NANOAOD/PromptReco-v1/000/392/295/00000/7500bd6a-2754-4a4d-b0e5-c0ef451a8180.root
+/store/data/Run2025C/Muon0/NANOAOD/PromptReco-v2/000/393/111/00000/1c2dc1cc-a4fc-4dd5-a886-ab4165be43ca.root
+/store/data/Run2025C/Muon1/NANOAOD/PromptReco-v2/000/393/125/00000/db7f9272-e5dd-48fe-8da3-18493ec843e2.root

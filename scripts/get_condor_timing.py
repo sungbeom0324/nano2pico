@@ -3,6 +3,7 @@
 import argparse
 import csv
 import json
+import math
 import re
 import shlex
 import statistics
@@ -695,7 +696,7 @@ def make_job_record(
         "wrapper_total": wrapper_total,
 
         "condor_run": condor_run,
-        "submit_to_end": submit_to_end,
+        "final_submit_to_end": submit_to_end,
 
         "files": [str(p) for p in paths],
 
@@ -879,9 +880,9 @@ def print_log_status_summary(records):
 def print_timing_summary(records):
 
     submits = [
-        r["submit"]
+        r["workflow_start"]
         for r in records
-        if r["submit"] is not None
+        if r.get("workflow_start") is not None
     ]
 
     ends = [
@@ -897,20 +898,22 @@ def print_timing_summary(records):
     print("Timing summary")
     print()
 
-    print(
-        f"First final submit  : "
-        f"{fmt_datetime(first_submit)}"
-    )
+    if submits:
+        print(
+            f"Workflow start      : "
+            f"{fmt_datetime(first_submit)}"
+        )
 
     print(
         f"Last termination    : "
         f"{fmt_datetime(last_end)}"
     )
 
-    print(
-        f"Final-job wall time : "
-        f"{fmt_seconds(seconds_between(first_submit, last_end))}"
-    )
+    if submits:
+        print(
+            f"Workflow wall time  : "
+            f"{fmt_seconds(seconds_between(first_submit, last_end))}"
+        )
 
     print()
 
@@ -920,7 +923,10 @@ def print_timing_summary(records):
     print_stats(records, "transfer", "Transfer")
     print_stats(records, "wrapper_total", "Wrapper total")
     print_stats(records, "condor_run", "Condor execute")
-    print_stats(records, "submit_to_end", "Submit -> end")
+    if records and "workflow_to_end" in records[0]:
+        print_stats(records, "workflow_to_end", "Workflow -> end")
+    if records and "final_submit_to_end" in records[0]:
+        print_stats(records, "final_submit_to_end", "Final submit -> end")
 
 
 # ============================================================
@@ -1198,6 +1204,7 @@ def write_csv(path, records):
         "ncmd",
 
         "submit",
+        "workflow_start",
         "execute",
         "terminate",
 
@@ -1210,7 +1217,8 @@ def write_csv(path, records):
         "wrapper_total_sec",
 
         "condor_run_sec",
-        "submit_to_end_sec",
+        "final_submit_to_end_sec",
+        "workflow_to_end_sec",
 
         "command",
         "files",
@@ -1282,6 +1290,8 @@ def write_csv(path, records):
                             else ""
                         ),
 
+                    "workflow_start": fmt_datetime(r.get("workflow_start")),
+
                     "terminate":
                         (
                             fmt_datetime(r["terminate"])
@@ -1310,8 +1320,8 @@ def write_csv(path, records):
                     "condor_run_sec":
                         r["condor_run"],
 
-                    "submit_to_end_sec":
-                        r["submit_to_end"],
+                    "final_submit_to_end_sec": r.get("final_submit_to_end"),
+                    "workflow_to_end_sec": r.get("workflow_to_end"),
 
                     "command":
                         r["command"],
@@ -1330,6 +1340,7 @@ def save_timing_plots(
     records,
     label,
     output_dir,
+    trial_counts=None,
 ):
 
     try:
@@ -1348,6 +1359,19 @@ def save_timing_plots(
         exist_ok=True,
     )
 
+    if trial_counts:
+        counts = Counter(trial_counts)
+        fig, ax = plt.subplots(figsize=(8, 5))
+        trials = sorted(counts)
+        ax.bar(trials, [counts[n] for n in trials], edgecolor="black")
+        ax.set_xticks(trials)
+        ax.set_title(f"{label}: Total attempts per logical job")
+        ax.set_xlabel("Number of attempts (initial submission included)")
+        ax.set_ylabel("Number of jobs")
+        fig.tight_layout()
+        fig.savefig(output_dir / "trial_counts.png", dpi=150)
+        plt.close(fig)
+
     plot_specs = [
         ("idle", "Idle", "idle.png"),
         ("download", "Download", "download.png"),
@@ -1355,8 +1379,11 @@ def save_timing_plots(
         ("transfer", "Transfer", "transfer.png"),
         ("wrapper_total", "Wrapper total", "wrapper_total.png"),
         ("condor_run", "Condor execute", "condor_execute.png"),
-        ("submit_to_end", "Submit -> end", "submit_to_end.png"),
     ]
+    if records and "workflow_to_end" in records[0]:
+        plot_specs.append(("workflow_to_end", "Workflow start -> end", "workflow_to_end.png"))
+    if records and "final_submit_to_end" in records[0]:
+        plot_specs.append(("final_submit_to_end", "Final-trial submit -> end", "final_submit_to_end.png"))
 
     for key, title, filename in plot_specs:
 
@@ -1374,7 +1401,8 @@ def save_timing_plots(
         ]
 
         mean_min = statistics.mean(vals_min)
-        median_min = statistics.median(vals_min)
+        # Nearest rank: at least 99% of measured jobs finish within this time.
+        p99_min = sorted(vals_min)[math.ceil(0.99 * len(vals_min)) - 1]
 
         fig, ax = plt.subplots(
             figsize=(8, 5)
@@ -1395,10 +1423,10 @@ def save_timing_plots(
         )
 
         ax.axvline(
-            median_min,
+            p99_min,
             linestyle=":",
             linewidth=2,
-            label=f"Median = {median_min:.1f} min",
+            label=f"99% of jobs completed = {p99_min:.1f} min",
         )
 
         ax.set_title(
@@ -1433,6 +1461,26 @@ def save_timing_plots(
 # ============================================================
 # Cluster mode
 # ============================================================
+
+def apply_workflow_start(records, start_time=None, trial_jobs=None, log_index=None):
+    """Use one origin for completion times, including time spent on retries."""
+    if start_time is None:
+        submits = [r["submit"] for r in records if r["submit"] is not None]
+        trial_ids = set()
+        for job in trial_jobs or []:
+            for identifier in job["job_trials"]:
+                parsed_id = parse_nano_identifier(identifier)
+                if parsed_id:
+                    trial_ids.add((parsed_id["cluster"], parsed_id["proc"]))
+        for cluster, proc in sorted(trial_ids):
+            for path in (log_index or {}).get((cluster, proc), []):
+                submits.extend(parse_file(path, cluster, proc)["submit_times"])
+        start_time = min(submits) if submits else None
+
+    for record in records:
+        record["workflow_start"] = start_time
+        record["workflow_to_end"] = seconds_between(start_time, record["terminate"])
+
 
 def run_cluster_mode(
     args,
@@ -1495,6 +1543,8 @@ def run_cluster_mode(
             records,
             json_mode=False,
         )
+
+    apply_workflow_start(records)
 
     print_cluster_summary(
         cluster,
@@ -1568,6 +1618,10 @@ def run_json_mode(
             json_mode=True,
         )
 
+    apply_workflow_start(
+        records, trial_jobs=nano_info["logical_jobs"], log_index=log_index,
+    )
+
     print_json_summary(
         nano_info,
         records,
@@ -1638,6 +1692,14 @@ def main():
 
     if args.plot:
 
+        trial_counts = None
+        if args.jobs_json:
+            # Include logical jobs with missing final logs or identifiers too.
+            with open(args.jobs_json) as source:
+                jobs = json.load(source)
+            trial_counts = [len(job.get("job_trials", []))
+                            for job in jobs if job]
+
         if args.plot_dir:
 
             plot_dir = args.plot_dir
@@ -1662,6 +1724,7 @@ def main():
             records,
             plot_label,
             plot_dir,
+            trial_counts=trial_counts,
         )
 
 
